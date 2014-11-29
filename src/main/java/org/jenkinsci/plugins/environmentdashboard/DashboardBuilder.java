@@ -18,6 +18,8 @@ import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
+import org.jenkinsci.plugins.environmentdashboard.dao.DashboardDAO;
+import org.jenkinsci.plugins.environmentdashboard.entity.Build;
 import org.jenkinsci.plugins.environmentdashboard.utils.DBConnection;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -94,27 +96,20 @@ public class DashboardBuilder extends BuildWrapper {
     @SuppressWarnings("rawtypes")
     private String writeToDB(AbstractBuild build, BuildListener listener, String envName, String compName, String currentBuildNum, String runTime, String buildJob, Integer numberOfDays) {
         String returnComment = null;
+        
         if (envName.matches("^\\s*$") || compName.matches("^\\s*$")) {
             returnComment = "WARN: Either Environment name or Component name is empty.";
             return returnComment;
         }
 
-        //Get DB connection
-        Connection conn = DBConnection.getConnection();
-
-        Statement stat = null;
+        DashboardDAO dashboardDAO = new DashboardDAO();
+        
         try {
-            stat = conn.createStatement();
+            dashboardDAO.createDashboardTable();
         } catch (SQLException e) {
-            returnComment = "WARN: Could not execute statement.";
-            return returnComment;
+            return "WARN: Could not create table env_dashboard.";
         }
-        try {
-            stat.execute("CREATE TABLE IF NOT EXISTS env_dashboard (envComp VARCHAR(255), jobUrl VARCHAR(255), buildNum VARCHAR(255), buildStatus VARCHAR(255), envName VARCHAR(255), compName VARCHAR(255), created_at TIMESTAMP,  buildJobUrl VARCHAR(255));");
-        } catch (SQLException e) {
-            returnComment = "WARN: Could not create table env_dashboard.";
-            return returnComment;
-        }
+        
         String indexValueofTable = envName + '=' + compName;
         String currentBuildResult = "UNKNOWN";
         if (build.getResult() == null && runTime.equals("PRE")) {
@@ -127,43 +122,33 @@ public class DashboardBuilder extends BuildWrapper {
         String currentBuildUrl = build.getUrl();
 
         String buildJobUrl;
+        
         //Build job is an optional configuration setting
         if (buildJob.isEmpty()) {
             buildJobUrl = "";
         } else {
             buildJobUrl = "job/" + buildJob + "/" + currentBuildNum;
         }
-
-        String runQuery = null;
-        if (runTime.equals("PRE")) {
-            runQuery = "INSERT INTO env_dashboard VALUES( '" + indexValueofTable + "', '" + currentBuildUrl + "', '" + currentBuildNum + "', '" + currentBuildResult + "', '" + envName + "', '" + compName + "' , + current_timestamp, '" + buildJobUrl + "');";
-        } else {
-            if (runTime.equals("POST")) {
-                runQuery = "UPDATE env_dashboard SET buildStatus = '" + currentBuildResult + "', created_at = current_timestamp WHERE envComp = '" + indexValueofTable +"' AND joburl = '" + currentBuildUrl + "'";
-            }
-        }
+        
+        // Create build object.
+        Build b = new Build(currentBuildNum,currentBuildUrl,currentBuildResult,envName);
+        
         try {
-            stat.execute(runQuery);
+            if (runTime.equals("PRE")) {
+            	dashboardDAO.addBuild(indexValueofTable, b, compName, buildJobUrl);
+            } else if(runTime.equals("POST")) {
+               dashboardDAO.updateBuild(indexValueofTable, b);
+            } 
         } catch (SQLException e) {
-            returnComment = "Error running insert query " + runQuery + ".";
-            return returnComment;
+           return "Error running insert query!" + e.getMessage().toString();
         }
-        if ( numberOfDays > 0 ) {
-            runQuery = "DELETE FROM env_dashboard where created_at <= current_timestamp - " + numberOfDays;
-            try {
-                stat.execute(runQuery);
-            } catch (SQLException e) {
-                returnComment = "Error running delete query " + runQuery + ".";
-                return returnComment;
-            }
-        }
+        
         try {
-            stat.close();
-            conn.close();
+        	dashboardDAO.deleteBuild(numberOfDays);
         } catch (SQLException e) {
-            returnComment = "Error closing connection.";
-            return returnComment;
+        	return "Error running delete query!" + e.getMessage().toString();
         }
+        
         return "Updated Dashboard DB";
     }
 
