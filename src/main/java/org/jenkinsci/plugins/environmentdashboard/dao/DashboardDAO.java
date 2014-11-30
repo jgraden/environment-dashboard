@@ -67,8 +67,7 @@ public class DashboardDAO {
      * @throws SQLException
      *             unable to execute insert build query.
      */
-    public boolean addBuild(String index, Build build, String componant,
-            String buildJobUrl) throws SQLException {
+    public boolean addBuild(String index, Build build) throws SQLException {
 
         // Get DB Connection
         Connection conn = DBConnection.getConnection();
@@ -77,10 +76,9 @@ public class DashboardDAO {
 
         // Populate prepared statement.
         DashboardDAO.setValues(stat, index, build.getUrl(), build.getId(),
-                build.getResult(), build.getEnvironment(), componant,
-                buildJobUrl);
-               
-
+                build.getResult(), build.getEnvironment(), build.getComponantName(),
+                build.getUrl());
+        
         boolean result = stat.execute();
         DBConnection.closeConnection();
 
