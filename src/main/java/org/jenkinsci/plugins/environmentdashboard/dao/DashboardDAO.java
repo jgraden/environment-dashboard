@@ -82,22 +82,22 @@ public class DashboardDAO {
     /**
      * Update an existing logged build
      * 
-     * @param index
-     *            primary key in the env_dashboard table
+     * @param envComp
+     *            the environment component key.
      * @param build
      *            the build being added to the dashboard
      * @return true if build updated else false
      * @throws SQLException
      *             unable to execute update build query.
      */
-    public boolean updateBuild(String index, Build build) throws SQLException {
+    public boolean updateBuild(String envComp, Build b) throws SQLException {
         // Get DB Connection
         Connection conn = DBConnection.getConnection();
         PreparedStatement stat = conn
                 .prepareStatement(DashboardDAO.updateBuildQuery);
 
         // Populate prepared statement.
-        DashboardDAO.setValues(stat, index, build.getResult(), build.getUrl());
+        DashboardDAO.setValues(stat,b.getResult(),envComp,b.getUrl());
 
         boolean result = stat.execute();
         DBConnection.closeConnection();
