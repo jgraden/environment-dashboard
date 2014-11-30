@@ -141,7 +141,7 @@ public class DashboardBuilder extends BuildWrapper {
         }
         
         try {
-        	dashboardDAO.deleteBuild(numberOfDays);
+        	dashboardDAO.deleteBuilds(numberOfDays);
         } catch (SQLException e) {
         	return "Error running delete query!" + e.getMessage().toString();
         }

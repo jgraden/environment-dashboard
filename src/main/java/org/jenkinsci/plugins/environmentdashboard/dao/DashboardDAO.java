@@ -114,7 +114,7 @@ public class DashboardDAO {
      * @throws SQLException
      *             unable to execute delete build query.
      */
-    public boolean deleteBuild(int daysOld) throws SQLException {
+    public boolean deleteBuilds(int daysOld) throws SQLException {
 
         boolean result = false;
 
