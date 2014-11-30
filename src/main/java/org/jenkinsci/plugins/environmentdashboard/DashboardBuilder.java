@@ -10,9 +10,7 @@ import hudson.tasks.BuildWrapperDescriptor;
 import hudson.util.FormValidation;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.servlet.ServletException;
 
@@ -20,7 +18,6 @@ import net.sf.json.JSONObject;
 
 import org.jenkinsci.plugins.environmentdashboard.dao.DashboardDAO;
 import org.jenkinsci.plugins.environmentdashboard.entity.Build;
-import org.jenkinsci.plugins.environmentdashboard.utils.DBConnection;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
