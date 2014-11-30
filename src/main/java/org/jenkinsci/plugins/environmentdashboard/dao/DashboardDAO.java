@@ -30,6 +30,9 @@ public class DashboardDAO {
     private static String updateBuildQuery = "UPDATE env_dashboard SET buildStatus = ?, created_at = CURRENT_TIMESTAMP WHERE "
             + "envComp = ? AND joburl = ?;";
 
+    // Truncate table - delete old tuples in env_dashboard
+    private static String truncateEnvDashbord = "TRUNCATE TABLE env_dashboard;";
+
     /**
      * Create dashboard table
      * 
@@ -97,7 +100,7 @@ public class DashboardDAO {
                 .prepareStatement(DashboardDAO.updateBuildQuery);
 
         // Populate prepared statement.
-        DashboardDAO.setValues(stat,b.getResult(),envComp,b.getUrl());
+        DashboardDAO.setValues(stat, b.getResult(), envComp, b.getUrl());
 
         boolean result = stat.execute();
         DBConnection.closeConnection();
@@ -128,6 +131,27 @@ public class DashboardDAO {
             result = stat.execute();
             DBConnection.closeConnection();
         }
+
+        return result;
+    }
+
+    /**
+     * Truncate/delete all tuples in env_dashboard table
+     * 
+     * @return true if truncated else false
+     * @throws SQLException
+     *             if unable to execute truncate query
+     */
+    public boolean truncateEnvDashboard() throws SQLException {
+        boolean result = false;
+
+        // Get DB Connection
+        Connection conn = DBConnection.getConnection();
+        PreparedStatement stat = conn
+                .prepareStatement(DashboardDAO.truncateEnvDashbord);
+
+        result = stat.execute();
+        DBConnection.closeConnection();
 
         return result;
     }
