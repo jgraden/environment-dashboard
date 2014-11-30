@@ -18,6 +18,12 @@ public class DBConnection {
 	private static Connection con = null;
 	
 	/**
+	 * Added explicit private constructor as 
+	 * this is a utility class.
+	 */
+	private DBConnection() {}
+	
+	/**
 	 * Return a database connection object.
 	 * @return a database connection object
 	 */
