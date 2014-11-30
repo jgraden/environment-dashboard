@@ -1,12 +1,12 @@
 package org.jenkinsci.plugins.environmentdashboard.utils;
 
-import hudson.model.Hudson;
-
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Logger;
-import java.io.File;
+
+import jenkins.model.Jenkins;
 
 /**
  * Singleton class to represent a single DB connection.
@@ -36,7 +36,7 @@ public class DBConnection {
 
         // Generate connection String for DB driver.
         String dbConnectionString = "jdbc:h2:"
-                + Hudson.getInstance().root.toString() + File.separator
+                + Jenkins.getInstance().root.toString() + File.separator
                 + "jenkins_dashboard";
 
         // Load driver and connect to DB
