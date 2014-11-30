@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.environmentdashboard.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.jenkinsci.plugins.environmentdashboard.entity.Build;
@@ -32,6 +33,9 @@ public class DashboardDAO {
 
     // Truncate table - delete old tuples in env_dashboard
     private static String truncateEnvDashbord = "TRUNCATE TABLE env_dashboard;";
+
+    // Get deployment component
+    private static String findDeployedComponant = "SELECT buildStatus,compName,buildJobUrl,jobUrl,buildNum FROM env_dashboard where envName = ? AND created_at = ?;";
 
     /**
      * Create dashboard table
@@ -75,6 +79,7 @@ public class DashboardDAO {
         DashboardDAO.setValues(stat, index, build.getUrl(), build.getId(),
                 build.getResult(), build.getEnvironment(), componant,
                 buildJobUrl);
+               
 
         boolean result = stat.execute();
         DBConnection.closeConnection();
@@ -154,6 +159,34 @@ public class DashboardDAO {
         DBConnection.closeConnection();
 
         return result;
+    }
+
+    /**
+     * Get deployed componant
+     */
+    public Build findDeployedComponant(String environment, String time)
+            throws SQLException {
+
+        // Get DB Connection
+        Connection conn = DBConnection.getConnection();
+        PreparedStatement stat = conn
+                .prepareStatement(DashboardDAO.findDeployedComponant);
+
+        DashboardDAO.setValues(stat, environment, time);
+
+        ResultSet set = stat.getResultSet();
+        DBConnection.closeConnection();
+        
+        if (set != null) {
+
+            return new Build(set.getString("buildNum"),
+                    set.getString("buildJobUrl"), set.getString("buildStatus"),
+                    environment, set.getString("compName"),
+                    set.getString("jobUrl"));
+
+        } else {
+            return null;
+        }
     }
 
     /**
