@@ -6,12 +6,23 @@ package org.jenkinsci.plugins.environmentdashboard.entity;
  * @author Robert Northard
  */
 public class Build {
-    private String id; // Build number
-    private String url; // URL for build
-    private String result; // result of the build
-    private String environment; // environment build belongs to
-    private String jobUrl; // Build job URL
-    private String componantName; // Component build belongs to
+    /* Build number */
+    private String id;
+    
+    /* URL for build */
+    private String url;
+    
+    /* Result of the build */
+    private String result; 
+    
+    /* Environment build belongs to */
+    private String environment; 
+    
+    /* Build job URL */
+    private String jobUrl; 
+    
+    /* Component build belongs to */
+    private String componantName; 
 
     /**
      * Create an object of type Build.
