@@ -128,11 +128,11 @@ public class DashboardBuilder extends BuildWrapper {
         }
         
         // Create build object.
-        Build b = new Build(currentBuildNum,currentBuildUrl,currentBuildResult,envName);
+        Build b = new Build(currentBuildNum,currentBuildUrl,currentBuildResult,envName,compName,buildJobUrl);
         
         try {
             if (runTime.equals("PRE")) {
-            	dashboardDAO.addBuild(indexValueofTable, b, compName, buildJobUrl);
+            	dashboardDAO.addBuild(indexValueofTable, b);
             } else if(runTime.equals("POST")) {
                dashboardDAO.updateBuild(indexValueofTable, b);
             } 

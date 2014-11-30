@@ -6,10 +6,12 @@ package org.jenkinsci.plugins.environmentdashboard.entity;
  * @author Robert Northard
  */
 public class Build {
-    private String id;
-    private String url;
-    private String result;
-    private String environment;
+    private String id; // Build number
+    private String url; // URL for build
+    private String result; // result of the build
+    private String environment; // environment build belongs to
+    private String jobUrl; // Build job URL
+    private String componantName; // Component build belongs to
 
     /**
      * Create an object of type Build.
@@ -23,11 +25,13 @@ public class Build {
      * @param environment
      *            the environment the build was deployed/built for.
      */
-    public Build(String id, String url, String result, String environment) {
+    public Build(String id, String url, String result, String environment, String componantName, String jobUrl) {
         this.id = id;
         this.setUrl(url);
         this.setResult(result);
         this.setEnvironment(environment);
+        this.setComponantName(componantName);
+        this.setJobUrl(jobUrl);
     }
 
     /**
@@ -80,5 +84,33 @@ public class Build {
      */
     public void setEnvironment(String environment) {
         this.environment = environment;
+    }
+
+    /**
+     * @return the jobUrl
+     */
+    public String getJobUrl() {
+        return jobUrl;
+    }
+
+    /**
+     * @param jobUrl the jobUrl to set
+     */
+    public void setJobUrl(String jobUrl) {
+        this.jobUrl = jobUrl;
+    }
+
+    /**
+     * @return the componantName
+     */
+    public String getComponantName() {
+        return componantName;
+    }
+
+    /**
+     * @param componantName the componantName to set
+     */
+    public void setComponantName(String componantName) {
+        this.componantName = componantName;
     }
 }
