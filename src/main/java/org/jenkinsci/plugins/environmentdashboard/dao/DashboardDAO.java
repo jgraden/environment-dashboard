@@ -31,13 +31,6 @@ public class DashboardDAO {
             + "envComp = ? AND joburl = ?;";
 
     /**
-	 * 
-	 */
-    public DashboardDAO() {
-
-    }
-
-    /**
      * Create dashboard table
      * 
      * @return true if table created, else false.
@@ -76,13 +69,9 @@ public class DashboardDAO {
                 .prepareStatement(DashboardDAO.insertBuildQuery);
 
         // Populate prepared statement.
-        stat.setString(1, index);
-        stat.setString(2, build.getUrl());
-        stat.setString(3, build.getId());
-        stat.setString(4, build.getResult());
-        stat.setString(5, build.getEnvironment());
-        stat.setString(6, componant);
-        stat.setString(7, buildJobUrl);
+        DashboardDAO.setValues(stat, index, build.getUrl(), build.getId(),
+                build.getResult(), build.getEnvironment(), componant,
+                buildJobUrl);
 
         boolean result = stat.execute();
         DBConnection.closeConnection();
@@ -108,9 +97,7 @@ public class DashboardDAO {
                 .prepareStatement(DashboardDAO.updateBuildQuery);
 
         // Populate prepared statement.
-        stat.setString(1, index);
-        stat.setString(2, build.getResult());
-        stat.setString(3, build.getUrl());
+        DashboardDAO.setValues(stat, index, build.getResult(), build.getUrl());
 
         boolean result = stat.execute();
         DBConnection.closeConnection();
@@ -143,6 +130,24 @@ public class DashboardDAO {
         }
 
         return result;
+    }
+
+    /**
+     * Utility method to set values in a prepared statement.
+     * 
+     * @param preparedStatement
+     *            the prepared statement/query
+     * @param values
+     *            the values to populate the prepared statement
+     * @throws SQLException
+     *             if parameterIndex does not correspond to a parameter marker
+     *             in the SQL statement
+     */
+    public static void setValues(PreparedStatement preparedStatement,
+            Object... values) throws SQLException {
+        for (int i = 0; i < values.length; i++) {
+            preparedStatement.setObject(i + 1, values[i]);
+        }
     }
 
 }
