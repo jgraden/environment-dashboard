@@ -162,12 +162,6 @@ public class DashboardBuilder extends BuildWrapper {
             return returnComment;
         }
 
-        
-        // 1. Create table of not exists
-        // 2. Alter table if old.
-        // 3. Add Column
-        // 4.
-        
         DashboardDAO dashboardDAO = new DashboardDAO();
         
         try {

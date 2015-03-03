@@ -47,6 +47,9 @@ public class Build {
         this.setEnvironment(environment);
         this.setComponantName(componantName);
         this.setJobUrl(jobUrl);
+        
+        //initialise
+        this.packages = "";
         this.addPackages(packages);
     }
 
